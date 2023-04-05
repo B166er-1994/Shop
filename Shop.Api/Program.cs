@@ -26,4 +26,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//////////Configurando la seguridad del sistema
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials());
+
 app.Run();
