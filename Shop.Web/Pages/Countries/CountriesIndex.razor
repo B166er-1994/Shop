@@ -1,15 +1,11 @@
 ﻿@page "/countries"
-
 @inject IRepository repository
+
 
 <h3>Paises</h3>
 
-<div class="mb-3">
-    <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
-</div>
-
 <GenericList MyList="Countries">
-    <RecordsComplete>
+  <Body>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -28,11 +24,12 @@
                         <td>
                             @country.Name
                         </td>
-                    </tr>   
+                    </tr>
                 }
             </tbody>
         </table>
-    </RecordsComplete>
+
+  </Body>
 </GenericList>
 
 @code {
