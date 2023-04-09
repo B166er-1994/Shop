@@ -21,12 +21,32 @@ namespace Shop.Api.Controllers
             return Ok(await _context.Countries.ToListAsync());
         }
         [HttpPost]
+        [HttpPost]
         public async Task<ActionResult> PostAsync(Country country)
-        { 
-            _context.Countries.Add(country);
-            await _context.SaveChangesAsync();
-            return Ok(country);
+        {
+            _context.Add(country);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(country);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un país con el mismo nombre.");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
+
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetAsync(int id)
@@ -40,13 +60,33 @@ namespace Shop.Api.Controllers
             return Ok(country);
         }
 
+
         [HttpPut]
         public async Task<ActionResult> PutAsync(Country country)
         {
             _context.Update(country);
-            await _context.SaveChangesAsync();
-            return Ok(country);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(country);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un registro con el mismo nombre.");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
+
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteAsync(int id)
