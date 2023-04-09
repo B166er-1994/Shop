@@ -18,7 +18,9 @@ namespace Shop.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return Ok(await _context.Countries.ToListAsync());
+            return Ok(await _context.Countries
+                .Include(x => x.States)
+                .ToListAsync());
         }
         [HttpPost]
         [HttpPost]
@@ -59,6 +61,15 @@ namespace Shop.Api.Controllers
 
             return Ok(country);
         }
+        [HttpGet("full")]
+        public async Task<ActionResult> GetFull()
+        {
+            return Ok(await _context.Countries
+                .Include(x => x.States!)
+                .ThenInclude(x => x.Cities)
+                .ToListAsync());
+        }
+
 
 
         [HttpPut]

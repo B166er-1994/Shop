@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sales.API.Data;
 using Shop.API.Data;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=DbConnection"));////
 builder.Services.AddTransient<SeedDb>();////
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);////
+
 
 var app = builder.Build();
 
