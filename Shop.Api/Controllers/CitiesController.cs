@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 
 using Shop.API.Data;
+using Shop.API.Helpers;
+using Shop.Shared.DTOs;
 using Shop.Shared.Entities;
 
-namespace Sales.API.Controllers
+namespace Shop.API.Controllers
 {
     [ApiController]
     [Route("/api/cities")]
@@ -17,23 +19,59 @@ namespace Sales.API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAsync()
-        {
-            return Ok(await _context.Cities.ToListAsync());
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAsync()
+        //{
+        //    return Ok(await _context.Cities.ToListAsync());
+        //}
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetAsync(int id)
+        //[HttpGet("{id:int}")]
+        //public async Task<IActionResult> GetAsync(int id)
+        //{
+        //    var city = await _context.Cities.FirstOrDefaultAsync(x => x.Id == id);
+        //    if (city == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(city);
+        //}
+
+        [HttpGet]
+        public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {
-            var city = await _context.Cities.FirstOrDefaultAsync(x => x.Id == id);
-            if (city == null)
+            var queryable = _context.Cities
+                .Where(x => x.State!.Id == pagination.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                return NotFound();
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
             }
 
-            return Ok(city);
+            return Ok(await queryable
+                .OrderBy(x => x.Name)
+                .Paginate(pagination)
+                .ToListAsync());
         }
+
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Cities
+                .Where(x => x.State!.Id == pagination.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> PostAsync(City city)

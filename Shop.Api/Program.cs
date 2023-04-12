@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Sales.API.Data;
 using Shop.API.Data;
+
 using Shop.API.Services;
 using System.Text.Json.Serialization;
 

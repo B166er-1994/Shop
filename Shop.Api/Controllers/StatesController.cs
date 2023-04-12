@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.API.Data;
+using Shop.API.Helpers;
+using Shop.Shared.DTOs;
 using Shop.Shared.Entities;
 
-namespace Sales.API.Controllers
+namespace Shop.API.Controllers
 {
     [ApiController]
     [Route("/api/states")]
@@ -16,13 +18,13 @@ namespace Sales.API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAsync()
-        {
-            return Ok(await _context.States
-                .Include(x => x.Cities)
-                .ToListAsync());
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAsync()
+        //{
+        //    return Ok(await _context.States
+        //        .Include(x => x.Cities)
+        //        .ToListAsync());
+        //}
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
@@ -37,6 +39,41 @@ namespace Sales.API.Controllers
 
             return Ok(state);
         }
+        [HttpGet]
+        public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.States
+                .Include(x => x.Cities)
+                .Where(x => x.Country!.Id == pagination.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            return Ok(await queryable
+                .OrderBy(x => x.Name)
+                .Paginate(pagination)
+                .ToListAsync());
+        }
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.States
+                .Where(x => x.Country!.Id == pagination.Id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> PostAsync(State state)

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Sales.Shared.Responses
+namespace Shop.Shared.Responses
 {
     public class CountryResponse
     {

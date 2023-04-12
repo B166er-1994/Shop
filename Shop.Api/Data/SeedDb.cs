@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shop.API.Services;
 
-using Sales.Shared.Responses;
+using Shop.Shared.Responses;
 using Shop.API.Data;
 
 using Shop.Shared.Entities;
-using Shop.Shared.Responses;
 
-namespace Sales.API.Data
+
+namespace Shop.API.Data
 {
     public class SeedDb
     {
