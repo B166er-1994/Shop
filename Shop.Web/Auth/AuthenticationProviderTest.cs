@@ -10,9 +10,9 @@ namespace Shop.Web.Auth
         {
             public override async Task<AuthenticationState> GetAuthenticationStateAsync()
             {
-                await Task.Delay(3000);
+               // await Task.Delay(3000);
                 var anonimous = new ClaimsIdentity();
-                var zuluUser = new ClaimsIdentity(new List<Claim>
+                var betoUser = new ClaimsIdentity(new List<Claim>
                 {
                 new Claim("FirstName", "Beto"),
                 new Claim("LastName", "Ramos"),
@@ -20,7 +20,7 @@ namespace Shop.Web.Auth
                 new Claim(ClaimTypes.Role, "Admin")
                 },
                 authenticationType: "test");
-                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(zuluUser)));
+                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(betoUser)));
             }
         }
     }

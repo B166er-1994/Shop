@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Shop.Shared.DTO;
 using Shop.Shared.Entities;
 
 namespace Shop.Api.Helpers
@@ -15,6 +16,10 @@ namespace Shop.Api.Helpers
         Task AddUserToRoleAsync(User user, string roleName);
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
+        Task<SignInResult> LoginAsync(LoginDTO model);
+
+        Task LogoutAsync();
+
 
     }
 }
